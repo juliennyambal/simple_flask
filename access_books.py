@@ -11,7 +11,7 @@ print(books.json()['books'])
 
 book_items = books.json()['books']
 
-insert_books = ["pepsi", "7up", "8up", "9up", "miranda", "the great one"]
+insert_books = ["Book 1", "Book 2", "Book 3", "Book 4", "Book 5", "Book 6"]
 insert_description = ["great", "nice", "good", "marvelous", "amazing", "the great one"]
 
 for book, description in zip(insert_books, insert_description):
