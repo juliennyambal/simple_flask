@@ -11,12 +11,20 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book_store.sqlite3'
 # Initialize the SQLAlchemy database instance.
 db = SQLAlchemy(app)
 
+def calculate_age(creation_year:str) -> int:
+    """
+    Calculate the age of the book inserted
+    Warning: 2024 is hardcoded. This should be dynamic.
+    """
+    return 2024 - int(creation_year)
+
 # Define a Book model using SQLAlchemy.
 class Book(db.Model):
     # Define the primary key and other columns for the Book model.
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.String(120))
+    age = db.Column(db.Integer, nullable=False)
 
     # Define a string representation for the Book model.
     def __repr__(self):
@@ -40,7 +48,7 @@ def get_all_books():
     output = []
     # Iterate over each book and create a dictionary of book data.
     for book in books:
-        book_data = {"name": book.name, "description": book.description}
+        book_data = {"name": book.name, "description": book.description, "age": book.age}
         output.append(book_data)
     # Return the list of book data.
     return {"books": output}
@@ -51,13 +59,17 @@ def get_book_by_id(id):
     # Retrieve a book by its ID from the database.
     book = Book.query.get_or_404(id)
     # Return the book data.
-    return {"name": book.name, "description": book.description}
+    return {"name": book.name, "description": book.description, "age": book.age}
 
 # Define a route to add a new book to the database.
 @app.route("/books", methods=["POST"])
 def add_book():
+    # Get the age of the new book from its creation year
+    book_age = calculate_age(request.json["year"])
     # Create a new book from the JSON data.
-    book = Book(name=request.json["name"], description=request.json["description"])
+    book = Book(name=request.json["name"], 
+                description=request.json["description"],
+                age = book_age)
     # Add the book to the database session.
     db.session.add(book)
     # Commit the changes to the database.
