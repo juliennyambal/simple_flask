@@ -1,16 +1,23 @@
 # Import necessary modules from Flask and Flask-SQLAlchemy.
 from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
+
+
+# DB Connections
+engine = create_engine("sqlite:///book_store.sqlite3")
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
+
+Base = declarative_base()
+Base.query = db_session.query_property()
+
 
 # Create a new Flask application.
 app = Flask(__name__)
 
-# Configure the database URI for the application.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book_store.sqlite3'
-
-# Initialize the SQLAlchemy database instance.
-db = SQLAlchemy(app)
-
+# Custom function
 def calculate_age(creation_year:str) -> int:
     """
     Calculate the age of the book inserted
@@ -19,12 +26,13 @@ def calculate_age(creation_year:str) -> int:
     return 2024 - int(creation_year)
 
 # Define a Book model using SQLAlchemy.
-class Book(db.Model):
+class Book(Base):
+    __tablename__ = "book"
     # Define the primary key and other columns for the Book model.
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    description = db.Column(db.String(120))
-    age = db.Column(db.Integer, nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), unique=True, nullable=False)
+    description = Column(String(120))
+    age = Column(Integer, nullable=False)
 
     # Define a string representation for the Book model.
     def __repr__(self):
@@ -32,7 +40,7 @@ class Book(db.Model):
 
 # Perform database migration and create all tables.
 with app.app_context():
-    db.create_all()
+    Base.metadata.create_all(bind=engine)
 
 # Define a route for the root URL of the application.
 @app.route("/")
@@ -71,9 +79,9 @@ def add_book():
                 description=request.json["description"],
                 age = book_age)
     # Add the book to the database session.
-    db.session.add(book)
+    db_session.add(book)
     # Commit the changes to the database.
-    db.session.commit()
+    db_session.commit()
     # Return the ID of the newly added book.
     return {"id": book.id}
 
@@ -85,7 +93,7 @@ def delete_book_by_id(id):
     # Delete the book from the database.
     book.delete()
     # Commit the changes to the database.
-    db.session.commit()
+    db_session.session.commit()
     # Return a success message.
     return {"Message": f"Book with id {id} deleted"}
 
@@ -101,7 +109,7 @@ def update_book_by_id(id):
     book.name = name
     book.description = description
     # Commit the changes to the database.
-    db.session.commit()
+    db_session.session.commit()
     # Return a success message.
     return {"Message": f"Book with id {id} updated"}
 
