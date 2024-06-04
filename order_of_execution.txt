@@ -1,11 +1,12 @@
 1 - build_chat_gpt_bot.py -> To just consume a public API. Emphasize on the headers=, the URL, the payload and the different methods that requests has.
 
 2 - app.py -> Introduce flask from hello world to all the Restful methods, through database models. Expose the APIs and consume them with curl, Postman, and python in point 3.
+    - Insert the headers 
+        headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
     - add books 
         {"name": "book_crazy", "description": "description_crazy", "year": 1989}
         {"name": "mario", "description": "mario's book", "year": 2021}
         {"name": "luigi", "description": "luigi's book", "year": 2023}
-
 
 3 - access_books.py -> This is to show that we can turn our API into a public API and let the other people to use it
 In the code, 
