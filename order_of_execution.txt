@@ -1,4 +1,4 @@
-1 - build_chat_gpt_bot.py -> To just consume a public API. Emphasize on the headers=, the URL, the payload and the different methods that requests has.
+1 - Build all the api in the folder called "API Calls Examples" -> To just consume a public API. Emphasize on the headers=, the URL, the payload and the different methods that requests has.
 
 2 - app.py -> Introduce flask from hello world to all the Restful methods, through database models. Expose the APIs and consume them with curl, Postman, and python in point 3.
     - Insert the headers 
