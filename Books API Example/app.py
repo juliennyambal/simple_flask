@@ -93,7 +93,7 @@ def delete_book_by_id(id):
     # Delete the book from the database.
     book.delete()
     # Commit the changes to the database.
-    db_session.session.commit()
+    db_session.commit()
     # Return a success message.
     return {"Message": f"Book with id {id} deleted"}
 
@@ -109,7 +109,7 @@ def update_book_by_id(id):
     book.name = name
     book.description = description
     # Commit the changes to the database.
-    db_session.session.commit()
+    db_session.commit()
     # Return a success message.
     return {"Message": f"Book with id {id} updated"}
 
